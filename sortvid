@@ -1,0 +1,58 @@
+#! /bin/bash
+eval src=$1
+eval dest=$2
+eval log=$3
+
+tfile="/tmp/$(basename $0).files.$$.tmp"
+tfile2="/tmp/$(basename $0).dirs.$$.tmp"
+tfile3="/tmp/$(basename $0).arch.$$.tmp"
+
+touch $tfile
+touch $tfile2
+touch $tfile3
+
+#sort files into directories
+cd $src
+find -maxdepth 1 -type f -daystart -mtime +0 -exec ls -l --time-style long-iso {} \; > $tfile
+
+while read line
+do
+    filename=$(echo $line | awk '{print $8}')
+    filedate=$(echo $line | awk '{print $6}')
+
+    if [ ! -d $dest/$filedate ]; then
+	mkdir -p $dest/$filedate
+    fi
+
+    mv -vf $filename $dest/$filedate | sed -e "s/^/$(date -R) /" >> $log
+    touch --date=$(echo "$filedate" | sed 's/-//g') $dest/$filedate
+done < $tfile
+
+#compress old directories
+cd $dest
+find -maxdepth 1 -type d -daystart -mtime +6 -exec ls -ld --time-style long-iso {} \; > $tfile2
+
+while read line2
+do
+   dirname=$(echo $line2 | awk '{print $8}')
+   dirdate=$(echo $line2 | awk '{print $6}')
+   archivename="${dirname}.tar.gz"
+
+   echo "creating %archivename" | sed -e "s/^/$(date -R) /" >> $log
+   tar zcfv $archivename $dirname | sed -e "s/^/$(date -R) /" >> $log
+   touch --date=$(echo "$dirdate" | sed 's/-//g') $archivename
+   rm -rfv $dirname | sed -e "s/^/$(date -R) /" >> $log
+done < $tfile2
+
+#remove old archives
+find -maxdepth 1 -type f -daystart -mtime +29 -exec ls -l --time-style long-iso {} \; > $tfile3
+while read line3
+do
+   filename=$(echo $line3 | awk '{print $8}')
+
+   rm -rfv $filename | sed -e "s/^/$(date -R) /" >> $log
+done < $tfile3
+
+rm $tfile
+rm $tfile2
+rm $tfile3
