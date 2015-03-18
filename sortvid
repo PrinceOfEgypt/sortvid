@@ -11,6 +11,8 @@ touch $tfile
 touch $tfile2
 touch $tfile3
 
+echo "sortvid starting" | sed -e "s/^/$(date -R) /" >> $log
+
 #sort files into directories
 cd $src
 find -maxdepth 1 -type f -daystart -mtime +0 -exec ls -l --time-style long-iso {} \; > $tfile
