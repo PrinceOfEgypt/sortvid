@@ -12,7 +12,7 @@ tfile3="/tmp/$(basename $0).arch.$$.tmp"
 
 touch $tfile
 touch $tfile2
-touch $tfile3e
+touch $tfile3
 
 logmsg "sortvid starting"
 
