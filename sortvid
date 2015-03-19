@@ -4,7 +4,7 @@ eval dest=$2
 eval log=$3
 
 function logmsg { echo $(date -R)": $*" >> $log ; }
-function logoutput { while read output; do logmsg &output; done; }
+function logoutput { while read output; do logmsg $output; done; }
 
 tfile="/tmp/$(basename $0).files.$$.tmp"
 tfile2="/tmp/$(basename $0).dirs.$$.tmp"
