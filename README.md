@@ -3,6 +3,9 @@ File / video sorting script
 
 usage: sortvid src target logfile
 
+new features:
+- improved logging
+
 todo:
 - check parameters for missing / invalid values
 - parameterize age(s)
