@@ -44,7 +44,7 @@ do
    dirdate=$(echo $line2 | awk '{print $6}')
    archivename="${dirname}.tar.gz"
 
-   echo "creating %archivename" | logoutput
+   logmsg "creating "$archivename
    tar zcfv $archivename $dirname | logoutput
    touch --date=$(echo "$dirdate" | sed 's/-//g') $archivename
    rm -rfv $dirname | logoutput
