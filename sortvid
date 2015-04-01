@@ -57,6 +57,11 @@ while read line3
 do
    filename=$(echo $line3 | awk '{print $8}')
 
+   if [ ! -d $archive ]; then
+       logmsg "creating "$archive
+       mkdir -p $archive
+   fi
+
    mv -vf $filename $archive/$filename | logoutput
 done < $tfile3
 
