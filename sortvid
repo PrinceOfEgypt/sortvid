@@ -1,7 +1,8 @@
 #! /bin/bash
 eval src=$1
 eval dest=$2
-eval log=$3
+eval archive=$3
+eval log=$4
 
 function logmsg { echo $(date -R)": $*" >> $log ; }
 function logoutput { while read output; do logmsg $output; done; }
@@ -50,13 +51,13 @@ do
    rm -rfv $dirname | logoutput
 done < $tfile2
 
-#remove old archives
-find -maxdepth 1 -type f -daystart -mtime +29 -exec ls -l --time-style long-iso {} \; > $tfile3
+#move old archives
+find -maxdepth 1 -type f -daystart -mtime +9 -exec ls -l --time-style long-iso {} \; > $tfile3
 while read line3
 do
    filename=$(echo $line3 | awk '{print $8}')
 
-   rm -rfv $filename | logoutput
+   mv -vf $filename $archive/$filename | logoutput
 done < $tfile3
 
 logmsg "sortvid done"
